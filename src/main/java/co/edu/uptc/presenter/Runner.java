@@ -6,8 +6,6 @@ import co.edu.uptc.interfaces.ViewInterface;
 import co.edu.uptc.model.GameModel;
 import co.edu.uptc.view.GameFrame;
 
-import javax.swing.*;
-
 public class Runner {
     private ModelInterface model;
     private ViewInterface view;

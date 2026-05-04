@@ -13,7 +13,7 @@ public class AppConfig {
 
     public static final int RACKET_WIDTH       = 15;
     public static final int RACKET_HEIGHT      = 80;
-    public static final int RACKET_X           = 30;
+    public static final int RACKET_X           = PANEL_WIDTH - 30;
 
     public static final int SPEED_INCREMENT    = 1;
     public static final int MAX_SPEED          = 15;

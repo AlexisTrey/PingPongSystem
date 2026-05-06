@@ -1,14 +1,25 @@
 package co.edu.uptc.view;
 
 import co.edu.uptc.config.AppConfig;
+import co.edu.uptc.interfaces.PresenterInterface;
+import co.edu.uptc.pojo.Ball;
+import co.edu.uptc.pojo.Racket;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.util.List;
 
 public class GamePanel extends JPanel {
 
+    private PresenterInterface presenter;
+    private List<Ball>         balls;
+    private Racket             racket;
+
     public GamePanel() {
         initPanel();
+        addMouseMotionListener();
     }
 
     private void initPanel() {
@@ -16,30 +27,42 @@ public class GamePanel extends JPanel {
         setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
     }
 
+    private void addMouseMotionListener() {
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                if (presenter != null) presenter.onMoveRacket(e.getY());
+            }
+        });
+    }
+
+    public void setPresenter(PresenterInterface presenter) {
+        this.presenter = presenter;
+    }
+
+    public void updateState(List<Ball> balls, Racket racket) {
+        this.balls  = balls;
+        this.racket = racket;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        drawPlaceholderRacket(g);
-        drawPlaceholderBall(g);
+        if (racket != null) drawRacket(g);
+        if (balls  != null) drawBalls(g);
     }
 
-    private void drawPlaceholderRacket(Graphics g) {
+    private void drawRacket(Graphics g) {
         g.setColor(Color.ORANGE);
-        g.fillRect(
-                AppConfig.RACKET_X,
-                AppConfig.PANEL_HEIGHT / 2 - AppConfig.RACKET_HEIGHT / 2,
-                AppConfig.RACKET_WIDTH,
-                AppConfig.RACKET_HEIGHT
-        );
+        g.fillRect(racket.getX(), racket.getY(), racket.getWidth(), racket.getHeight());
     }
 
-    private void drawPlaceholderBall(Graphics g) {
+    private void drawBalls(Graphics g) {
         g.setColor(Color.BLUE);
-        g.fillOval(
-                AppConfig.PANEL_WIDTH / 2,
-                AppConfig.PANEL_HEIGHT / 2,
-                AppConfig.BALL_DIAMETER,
-                AppConfig.BALL_DIAMETER
-        );
+        synchronized (balls) {
+            for (Ball ball : balls) {
+                g.fillOval(ball.getX(), ball.getY(), ball.getDiameter(), ball.getDiameter());
+            }
+        }
     }
 }

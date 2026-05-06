@@ -1,13 +1,22 @@
 package co.edu.uptc.view;
 
+import co.edu.uptc.components.button.CustomButton;
+import co.edu.uptc.components.dialog.AboutDialog;
+import co.edu.uptc.components.fonts.AppFonts;
 import co.edu.uptc.config.AppConfig;
 import co.edu.uptc.interfaces.PresenterInterface;
 import co.edu.uptc.interfaces.ViewInterface;
+import co.edu.uptc.pojo.Ball;
+import co.edu.uptc.pojo.Racket;
+import co.edu.uptc.util.ThemeManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GameFrame extends JFrame implements ViewInterface {
 
@@ -16,10 +25,9 @@ public class GameFrame extends JFrame implements ViewInterface {
     private PresenterInterface presenter;
     private GamePanel gamePanel;
 
-    private JLabel labelBounces;
     private JLabel labelStartTime;
     private JLabel labelElapsed;
-    private JButton btnAddBall;
+    private JTextArea textAreaBounces;
 
     private GameFrame() {
         initFrame();
@@ -52,44 +60,41 @@ public class GameFrame extends JFrame implements ViewInterface {
     private void addMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        JMenu menuGame = new JMenu("Playing");
-        JMenuItem itemStart   = new JMenuItem("Start");
-        JMenuItem itemPause   = new JMenuItem("Pause");
-        JMenuItem itemResume  = new JMenuItem("Resume");
-        JMenuItem itemRestart = new JMenuItem("Restart");
-        JMenuItem itemExit    = new JMenuItem("Exit");
+        JMenu menuJuego = new JMenu("Juego");
+        JMenu menuTema  = new JMenu("Cambiar tema");
 
-        itemStart.addActionListener(e   -> { if (presenter != null) presenter.onStartGame();  });
-        itemPause.addActionListener(e   -> { if (presenter != null) presenter.onPauseGame();  });
-        itemResume.addActionListener(e  -> { if (presenter != null) presenter.onResumeGame(); });
-        itemRestart.addActionListener(e -> { if (presenter != null) presenter.onResetGame();  });
-        itemExit.addActionListener(e    -> System.exit(0));
+        ThemeManager.TEMAS.forEach((nombre, clave) -> {
+            JMenuItem item = new JMenuItem(nombre);
+            item.addActionListener(e -> ThemeManager.applyByKey(clave));
+            menuTema.add(item);
+        });
 
-        menuGame.add(itemStart);
-        menuGame.add(itemPause);
-        menuGame.add(itemResume);
-        menuGame.add(itemRestart);
-        menuGame.addSeparator();
-        menuGame.add(itemExit);
+        JMenuItem itemSalir = new JMenuItem("Salir");
+        itemSalir.addActionListener(e -> System.exit(0));
 
-        JMenu menuInfo = new JMenu("About");
-        JMenuItem itemInfo = new JMenuItem("Project Info");
+        menuJuego.add(menuTema);
+        menuJuego.addSeparator();
+        menuJuego.add(itemSalir);
+
+        JMenu menuInfo     = new JMenu("Acerca de");
+        JMenuItem itemInfo = new JMenuItem("Info del proyecto");
         itemInfo.addActionListener(e -> showProjectInfo());
         menuInfo.add(itemInfo);
 
-        menuBar.add(menuGame);
+        menuBar.add(menuJuego);
         menuBar.add(menuInfo);
         setJMenuBar(menuBar);
     }
 
     private void addGamePanel() {
         gamePanel = new GamePanel();
+        gamePanel.setPresenter(presenter);
         add(gamePanel);
     }
 
     private void addInfoPanel() {
         JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 10));
-        infoPanel.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH, AppConfig.FRAME_HEIGHT));
+        infoPanel.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH, AppConfig.PANEL_HEIGHT));
         infoPanel.setBorder(BorderFactory.createTitledBorder("Game Info"));
 
         buildDataPanel(infoPanel);
@@ -99,28 +104,67 @@ public class GameFrame extends JFrame implements ViewInterface {
     }
 
     private void buildDataPanel(JPanel parent) {
+
         JLabel lblBouncesTitle = new JLabel("Rebotes:");
-        labelBounces = new JLabel("0");
+        lblBouncesTitle.setFont(AppFonts.BODY_BOLD);
+        lblBouncesTitle.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 20));
+        textAreaBounces = new JTextArea();
+        textAreaBounces.setEditable(false);
+        textAreaBounces.setFont(AppFonts.BODY);
+        textAreaBounces.setBackground(parent.getBackground());
+        textAreaBounces.setText("--");
+        JScrollPane scrollBounces = new JScrollPane(textAreaBounces);
+        scrollBounces.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 150));
+        scrollBounces.setBorder(BorderFactory.createEtchedBorder());
 
         JLabel lblStartTitle = new JLabel("Hora de inicio:");
+        lblStartTitle.setFont(AppFonts.BODY_BOLD);
+        lblStartTitle.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 20));
         labelStartTime = new JLabel("--:--:--");
+        labelStartTime.setFont(AppFonts.BODY);
+        labelStartTime.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 20));
 
         JLabel lblElapsedTitle = new JLabel("Tiempo transcurrido:");
+        lblElapsedTitle.setFont(AppFonts.BODY_BOLD);
+        lblElapsedTitle.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 20));
         labelElapsed = new JLabel("00:00:00");
-
+        labelElapsed.setFont(AppFonts.BODY);
+        labelElapsed.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 20));
         parent.add(lblBouncesTitle);
-        parent.add(labelBounces);
+        parent.add(scrollBounces);
         parent.add(lblStartTitle);
         parent.add(labelStartTime);
         parent.add(lblElapsedTitle);
         parent.add(labelElapsed);
+
+        UIManager.addPropertyChangeListener(evt -> {
+            if ("lookAndFeel".equals(evt.getPropertyName())) {
+                textAreaBounces.setBackground(parent.getBackground());
+            }
+        });
     }
 
     private void buildButtonPanel(JPanel parent) {
-        btnAddBall = new JButton("Add Ball");
-        btnAddBall.setPreferredSize(new Dimension(150, 30));
-        btnAddBall.addActionListener(e -> { if (presenter != null) presenter.onAddBall(); });
-        parent.add(btnAddBall);
+        CustomButton btnIniciar = new CustomButton("Iniciar");
+        btnIniciar.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 35));
+        btnIniciar.onClick(e -> { if (presenter != null) presenter.onStartGame(); });
+        CustomButton btnPausar = new CustomButton("Pausar");
+        btnPausar.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 35));
+        btnPausar.onClick(e -> { if (presenter != null) presenter.onPauseGame(); });
+        CustomButton btnReanudar = new CustomButton("Reanudar");
+        btnReanudar.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 35));
+        btnReanudar.onClick(e -> { if (presenter != null) presenter.onResumeGame(); });
+        CustomButton btnReiniciar = new CustomButton("Reiniciar");
+        btnReiniciar.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 35));
+        btnReiniciar.onClick(e -> { if (presenter != null) presenter.onResetGame(); });
+        CustomButton btnAgregarPelota = new CustomButton("Añadir pelota");
+        btnAgregarPelota.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 35));
+        btnAgregarPelota.onClick(e -> { if (presenter != null) presenter.onAddBall(); });
+        parent.add(btnIniciar);
+        parent.add(btnPausar);
+        parent.add(btnReanudar);
+        parent.add(btnReiniciar);
+        parent.add(btnAgregarPelota);
     }
 
     private void addKeyListeners() {
@@ -128,8 +172,8 @@ public class GameFrame extends JFrame implements ViewInterface {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (presenter == null) return;
-                if (e.getKeyCode() == KeyEvent.VK_UP)   presenter.onMoveRacket(-20);
-                if (e.getKeyCode() == KeyEvent.VK_DOWN) presenter.onMoveRacket(20);
+                if (e.getKeyCode() == KeyEvent.VK_UP)   presenter.onMoveRacketBy(-20);
+                if (e.getKeyCode() == KeyEvent.VK_DOWN) presenter.onMoveRacketBy(20);
                 if (e.getKeyChar() == '+')               presenter.onIncreaseSpeed();
                 if (e.getKeyChar() == '-')               presenter.onDecreaseSpeed();
             }
@@ -138,17 +182,20 @@ public class GameFrame extends JFrame implements ViewInterface {
     }
 
     private void showProjectInfo() {
-        JOptionPane.showMessageDialog(
-                this,
-                "Ping Pong Game\nDesarrollado con Java + Swing\nPatrón MVP\nConcurrencia con Threads",
-                "Project Info",
-                JOptionPane.INFORMATION_MESSAGE
-        );
+        Map<String, String> info = new LinkedHashMap<>();
+        info.put("Proyecto:",  "Ping Pong Game");
+        info.put("Autor:",     "Yulian Alexis Tobar Rios");
+        info.put("Versión:",   "1.0.0");
+        info.put("Materia:",   "Programación III");
+        info.put("Patrón:",    "MVP");
+        info.put("Tecnología:", "Java + Swing + Hilos");
+        new AboutDialog(this, "Ping Pong Game", info).setVisible(true);
     }
 
     @Override
     public void setPresenter(PresenterInterface presenter) {
         this.presenter = presenter;
+        if (gamePanel != null) gamePanel.setPresenter(presenter);
     }
 
     @Override
@@ -165,15 +212,21 @@ public class GameFrame extends JFrame implements ViewInterface {
     public void showGameOver() {
         int option = JOptionPane.showConfirmDialog(
                 this,
-                "Game Over. ¿Deseas reiniciar?",
-                "Game Over",
+                "Juego terminado. ¿Deseas reiniciar?",
+                "Fin del juego",
                 JOptionPane.YES_NO_OPTION
         );
         if (option == JOptionPane.YES_OPTION) presenter.onResetGame();
         else System.exit(0);
     }
 
-    public void updateBounces(String value)   { labelBounces.setText(value);   }
+    public void updateBounces(String value) {
+        textAreaBounces.setText(value);
+    }
     public void updateStartTime(String value) { labelStartTime.setText(value); }
     public void updateElapsed(String value)   { labelElapsed.setText(value);   }
+
+    public void updateGameState(java.util.List<Ball> balls, Racket racket) {
+        if (gamePanel != null) gamePanel.updateState(balls, racket);
+    }
 }

@@ -23,6 +23,18 @@
             <artifactId>flatlaf</artifactId>
             <version>3.7.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>co.edu.uptc</groupId>
+            <artifactId>components-lib</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>co.edu.uptc</groupId>
+            <artifactId>i18n-lib</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <properties>

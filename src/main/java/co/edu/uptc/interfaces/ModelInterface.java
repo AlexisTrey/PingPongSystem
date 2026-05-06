@@ -12,6 +12,7 @@ public interface ModelInterface {
     void resetGame();
     void addBall();
     void moveRacket(int y);
+    void moveRacketBy(int deltaY);
     void increaseSpeed();
     void decreaseSpeed();
     List<Ball> getBalls();

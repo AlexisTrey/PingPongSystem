@@ -9,6 +9,7 @@ public interface PresenterInterface {
     void onResetGame();
     void onAddBall();
     void onMoveRacket(int y);
+    void onMoveRacketBy(int deltaY);
     void onIncreaseSpeed();
     void onDecreaseSpeed();
     void refreshView();

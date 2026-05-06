@@ -12,11 +12,11 @@ public class Ball {
     }
 
     public Ball(int x, int y, int diameter, int speedX, int speedY, int bounceCount) {
-        this.x           = x;
-        this.y           = y;
-        this.diameter    = diameter;
-        this.speedX      = speedX;
-        this.speedY      = speedY;
+        this.x = x;
+        this.y = y;
+        this.diameter = diameter;
+        this.speedX = speedX;
+        this.speedY = speedY;
         this.bounceCount = bounceCount;
     }
 

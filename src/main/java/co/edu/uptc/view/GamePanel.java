@@ -14,8 +14,8 @@ import java.util.List;
 public class GamePanel extends JPanel {
 
     private PresenterInterface presenter;
-    private List<Ball>         balls;
-    private Racket             racket;
+    private List<Ball> balls;
+    private Racket racket;
 
     public GamePanel() {
         initPanel();
@@ -31,7 +31,8 @@ public class GamePanel extends JPanel {
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
-                if (presenter != null) presenter.onMoveRacket(e.getY());
+                if (presenter != null)
+                    presenter.onMoveRacket(e.getY());
             }
         });
     }
@@ -41,15 +42,17 @@ public class GamePanel extends JPanel {
     }
 
     public void updateState(List<Ball> balls, Racket racket) {
-        this.balls  = balls;
+        this.balls = balls;
         this.racket = racket;
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (racket != null) drawRacket(g);
-        if (balls  != null) drawBalls(g);
+        if (racket != null)
+            drawRacket(g);
+        if (balls != null)
+            drawBalls(g);
     }
 
     private void drawRacket(Graphics g) {

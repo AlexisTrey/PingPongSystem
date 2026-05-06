@@ -12,46 +12,52 @@ import java.util.List;
 
 public class GameModel implements ModelInterface {
 
-    private final List<Ball>   balls   = Collections.synchronizedList(new ArrayList<>());
+    private final List<Ball> balls = Collections.synchronizedList(new ArrayList<>());
     private final List<Thread> threads = Collections.synchronizedList(new ArrayList<>());
 
-    private Racket  racket;
+    private Racket racket;
     private boolean paused;
     private boolean gameOver;
-    private String  startTime;
-    private long    startMillis;
-    private int     globalSpeed;
+    private String startTime;
+    private long startMillis;
+    private int globalSpeed;
 
     private Thread speedThread;
     private Runnable onGameOver;
     private Runnable onUpdate;
 
-    public GameModel() {}
+    public GameModel() {
+    }
 
-    public void setOnGameOver(Runnable onGameOver) { this.onGameOver = onGameOver; }
-    public void setOnUpdate(Runnable onUpdate)      { this.onUpdate   = onUpdate;   }
+    public void setOnGameOver(Runnable onGameOver) {
+        this.onGameOver = onGameOver;
+    }
+
+    public void setOnUpdate(Runnable onUpdate) {
+        this.onUpdate = onUpdate;
+    }
 
     @Override
     public void startGame() {
         balls.clear();
         threads.clear();
-        paused      = false;
-        gameOver    = false;
+        paused = false;
+        gameOver = false;
         globalSpeed = AppConfig.INITIAL_SPEED_X;
-        startTime   = TimeFormatter.currentTime();
+        startTime = TimeFormatter.currentTime();
         startMillis = System.currentTimeMillis();
-        racket      = new Racket(
+        racket = new Racket(
                 AppConfig.RACKET_X,
                 AppConfig.PANEL_HEIGHT / 2 - AppConfig.RACKET_HEIGHT / 2,
                 AppConfig.RACKET_WIDTH,
-                AppConfig.RACKET_HEIGHT
-        );
+                AppConfig.RACKET_HEIGHT);
         addBall();
         startSpeedThread();
     }
 
     private void startSpeedThread() {
-        if (speedThread != null) speedThread.interrupt();
+        if (speedThread != null)
+            speedThread.interrupt();
         speedThread = new Thread(() -> {
             while (!gameOver && !Thread.currentThread().isInterrupted()) {
                 try {
@@ -68,15 +74,15 @@ public class GameModel implements ModelInterface {
 
     @Override
     public void addBall() {
-        if (gameOver) return;
+        if (gameOver)
+            return;
         Ball ball = new Ball(
                 AppConfig.PANEL_WIDTH / 4,
                 AppConfig.PANEL_HEIGHT / 2,
                 AppConfig.BALL_DIAMETER,
                 -globalSpeed,
                 globalSpeed,
-                0
-        );
+                0);
         balls.add(ball);
         Thread thread = new Thread(buildBallRunnable(ball));
         threads.add(thread);
@@ -88,7 +94,8 @@ public class GameModel implements ModelInterface {
             while (!gameOver && !Thread.currentThread().isInterrupted()) {
                 if (!paused) {
                     moveBall(ball);
-                    if (onUpdate != null) onUpdate.run();
+                    if (onUpdate != null)
+                        onUpdate.run();
                 }
                 sleep();
             }
@@ -140,13 +147,16 @@ public class GameModel implements ModelInterface {
         if (ball.getX() + ball.getDiameter() >= AppConfig.PANEL_WIDTH) {
             gameOver = true;
             stopAllThreads();
-            if (onGameOver != null) onGameOver.run();
+            if (onGameOver != null)
+                onGameOver.run();
         }
     }
 
     private void stopAllThreads() {
-        for (Thread t : threads) t.interrupt();
-        if (speedThread != null) speedThread.interrupt();
+        for (Thread t : threads)
+            t.interrupt();
+        if (speedThread != null)
+            speedThread.interrupt();
     }
 
     private void sleep() {
@@ -175,9 +185,11 @@ public class GameModel implements ModelInterface {
 
     @Override
     public void moveRacket(int y) {
-        if (racket == null) return;
+        if (racket == null)
+            return;
         int newY = y - racket.getHeight() / 2;
-        if (newY < 0) newY = 0;
+        if (newY < 0)
+            newY = 0;
         if (newY + racket.getHeight() > AppConfig.PANEL_HEIGHT) {
             newY = AppConfig.PANEL_HEIGHT - racket.getHeight();
         }
@@ -186,9 +198,11 @@ public class GameModel implements ModelInterface {
 
     @Override
     public void moveRacketBy(int deltaY) {
-        if (racket == null) return;
+        if (racket == null)
+            return;
         int newY = racket.getY() + deltaY;
-        if (newY < 0) newY = 0;
+        if (newY < 0)
+            newY = 0;
         if (newY + racket.getHeight() > AppConfig.PANEL_HEIGHT)
             newY = AppConfig.PANEL_HEIGHT - racket.getHeight();
         racket.setY(newY);
@@ -196,14 +210,16 @@ public class GameModel implements ModelInterface {
 
     @Override
     public void increaseSpeed() {
-        if (globalSpeed >= AppConfig.MAX_SPEED) return;
+        if (globalSpeed >= AppConfig.MAX_SPEED)
+            return;
         globalSpeed += AppConfig.SPEED_INCREMENT;
         applySpeedToBalls();
     }
 
     @Override
     public void decreaseSpeed() {
-        if (globalSpeed <= AppConfig.MIN_SPEED) return;
+        if (globalSpeed <= AppConfig.MIN_SPEED)
+            return;
         globalSpeed -= AppConfig.SPEED_INCREMENT;
         applySpeedToBalls();
     }
@@ -211,17 +227,36 @@ public class GameModel implements ModelInterface {
     private void applySpeedToBalls() {
         synchronized (balls) {
             for (Ball ball : balls) {
-                ball.setSpeedX(ball.getSpeedX() > 0 ?  globalSpeed : -globalSpeed);
-                ball.setSpeedY(ball.getSpeedY() > 0 ?  globalSpeed : -globalSpeed);
+                ball.setSpeedX(ball.getSpeedX() > 0 ? globalSpeed : -globalSpeed);
+                ball.setSpeedY(ball.getSpeedY() > 0 ? globalSpeed : -globalSpeed);
             }
         }
     }
 
-    @Override public List<Ball> getBalls()    { return balls;       }
-    @Override public Racket getRacket()       { return racket;      }
-    @Override public boolean isGameOver()     { return gameOver;    }
-    @Override public boolean isPaused()       { return paused;      }
-    @Override public String getStartTime()    { return startTime;   }
+    @Override
+    public List<Ball> getBalls() {
+        return balls;
+    }
+
+    @Override
+    public Racket getRacket() {
+        return racket;
+    }
+
+    @Override
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    @Override
+    public boolean isPaused() {
+        return paused;
+    }
+
+    @Override
+    public String getStartTime() {
+        return startTime;
+    }
 
     @Override
     public long getElapsedSeconds() {

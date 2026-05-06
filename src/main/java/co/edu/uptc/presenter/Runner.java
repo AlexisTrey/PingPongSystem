@@ -12,9 +12,9 @@ public class Runner {
     private PresenterInterface presenter;
 
     public void makeMVP() {
-        model     = new GameModel();
+        model = new GameModel();
         presenter = new GamePresenter();
-        view      = GameFrame.getInstance();
+        view = GameFrame.getInstance();
 
         presenter.setModel(model);
         presenter.setView(view);

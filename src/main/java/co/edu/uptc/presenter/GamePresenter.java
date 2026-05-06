@@ -12,11 +12,12 @@ import javax.swing.*;
 public class GamePresenter implements PresenterInterface {
 
     private ModelInterface model;
-    private ViewInterface  view;
-    private Thread         timerThread;
+    private ViewInterface view;
+    private Thread timerThread;
     private volatile boolean timerRunning;
 
-    public GamePresenter() {}
+    public GamePresenter() {
+    }
 
     @Override
     public void setModel(ModelInterface model) {
@@ -97,7 +98,8 @@ public class GamePresenter implements PresenterInterface {
     }
 
     private void updateInfoPanel() {
-        if (!(view instanceof GameFrame)) return;
+        if (!(view instanceof GameFrame))
+            return;
         GameFrame frame = (GameFrame) view;
         frame.updateStartTime(model.getStartTime());
         frame.updateElapsed(TimeFormatter.format(model.getElapsedSeconds()));
@@ -117,7 +119,7 @@ public class GamePresenter implements PresenterInterface {
 
     private void startTimer() {
         timerRunning = true;
-        timerThread  = new Thread(() -> {
+        timerThread = new Thread(() -> {
             while (timerRunning && !Thread.currentThread().isInterrupted()) {
                 SwingUtilities.invokeLater(this::updateInfoPanel);
                 try {
@@ -132,6 +134,7 @@ public class GamePresenter implements PresenterInterface {
 
     private void stopTimer() {
         timerRunning = false;
-        if (timerThread != null) timerThread.interrupt();
+        if (timerThread != null)
+            timerThread.interrupt();
     }
 }

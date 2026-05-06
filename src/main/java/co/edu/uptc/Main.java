@@ -6,7 +6,7 @@ import co.edu.uptc.util.ThemeManager;
 public class Main {
 
     public static void main(String[] args) {
-        ThemeManager.applyFromProperties(); // lee theme.properties al arrancar
+        ThemeManager.applyByKey(ThemeManager.LIGHT);
         new Runner().start();
     }
 

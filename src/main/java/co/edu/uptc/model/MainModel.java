@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class GameModel implements ModelInterface {
+public class MainModel implements ModelInterface {
 
     private final List<Ball> balls = Collections.synchronizedList(new ArrayList<>());
     private final List<Thread> threads = Collections.synchronizedList(new ArrayList<>());
@@ -26,7 +26,7 @@ public class GameModel implements ModelInterface {
     private Runnable onGameOver;
     private Runnable onUpdate;
 
-    public GameModel() {
+    public MainModel() {
     }
 
     public void setOnGameOver(Runnable onGameOver) {

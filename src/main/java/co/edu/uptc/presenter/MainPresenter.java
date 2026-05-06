@@ -3,27 +3,27 @@ package co.edu.uptc.presenter;
 import co.edu.uptc.interfaces.ModelInterface;
 import co.edu.uptc.interfaces.PresenterInterface;
 import co.edu.uptc.interfaces.ViewInterface;
-import co.edu.uptc.model.GameModel;
+import co.edu.uptc.model.MainModel;
 import co.edu.uptc.util.TimeFormatter;
-import co.edu.uptc.view.GameFrame;
+import co.edu.uptc.view.MainFrame;
 
 import javax.swing.*;
 
-public class GamePresenter implements PresenterInterface {
+public class MainPresenter implements PresenterInterface {
 
     private ModelInterface model;
     private ViewInterface view;
     private Thread timerThread;
     private volatile boolean timerRunning;
 
-    public GamePresenter() {
+    public MainPresenter() {
     }
 
     @Override
     public void setModel(ModelInterface model) {
         this.model = model;
-        ((GameModel) model).setOnGameOver(this::onGameOver);
-        ((GameModel) model).setOnUpdate(this::refreshView);
+        ((MainModel) model).setOnGameOver(this::onGameOver);
+        ((MainModel) model).setOnUpdate(this::refreshView);
     }
 
     @Override
@@ -82,8 +82,8 @@ public class GamePresenter implements PresenterInterface {
     @Override
     public void refreshView() {
         SwingUtilities.invokeLater(() -> {
-            if (view instanceof GameFrame) {
-                GameFrame frame = (GameFrame) view;
+            if (view instanceof MainFrame) {
+                MainFrame frame = (MainFrame) view;
                 frame.updateGameState(model.getBalls(), model.getRacket());
             }
             updateInfoPanel();
@@ -98,9 +98,9 @@ public class GamePresenter implements PresenterInterface {
     }
 
     private void updateInfoPanel() {
-        if (!(view instanceof GameFrame))
+        if (!(view instanceof MainFrame))
             return;
-        GameFrame frame = (GameFrame) view;
+        MainFrame frame = (MainFrame) view;
         frame.updateStartTime(model.getStartTime());
         frame.updateElapsed(TimeFormatter.format(model.getElapsedSeconds()));
         frame.updateBounces(buildBouncesText());

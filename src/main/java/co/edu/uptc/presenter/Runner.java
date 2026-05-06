@@ -3,8 +3,8 @@ package co.edu.uptc.presenter;
 import co.edu.uptc.interfaces.ModelInterface;
 import co.edu.uptc.interfaces.PresenterInterface;
 import co.edu.uptc.interfaces.ViewInterface;
-import co.edu.uptc.model.GameModel;
-import co.edu.uptc.view.GameFrame;
+import co.edu.uptc.model.MainModel;
+import co.edu.uptc.view.MainFrame;
 
 public class Runner {
     private ModelInterface model;
@@ -12,9 +12,9 @@ public class Runner {
     private PresenterInterface presenter;
 
     public void makeMVP() {
-        model = new GameModel();
-        presenter = new GamePresenter();
-        view = GameFrame.getInstance();
+        model = new MainModel();
+        presenter = new MainPresenter();
+        view = MainFrame.getInstance();
 
         presenter.setModel(model);
         presenter.setView(view);

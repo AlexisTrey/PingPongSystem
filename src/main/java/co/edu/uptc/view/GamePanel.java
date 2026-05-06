@@ -25,6 +25,7 @@ public class GamePanel extends JPanel {
     private void initPanel() {
         setPreferredSize(new Dimension(AppConfig.PANEL_WIDTH, AppConfig.PANEL_HEIGHT));
         setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        setFocusable(false);
     }
 
     private void addMouseMotionListener() {

@@ -12,14 +12,13 @@ import co.edu.uptc.util.ThemeManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class GameFrame extends JFrame implements ViewInterface {
+public class MainFrame extends JFrame implements ViewInterface {
 
-    private static GameFrame instance;
+    private static MainFrame instance;
 
     private PresenterInterface presenter;
     private GamePanel gamePanel;
@@ -28,14 +27,14 @@ public class GameFrame extends JFrame implements ViewInterface {
     private JLabel labelElapsed;
     private JTextArea textAreaBounces;
 
-    private GameFrame() {
+    private MainFrame() {
         initFrame();
         addComponents();
     }
 
-    public static GameFrame getInstance() {
+    public static MainFrame getInstance() {
         if (instance == null) {
-            instance = new GameFrame();
+            instance = new MainFrame();
         }
         return instance;
     }
@@ -60,12 +59,12 @@ public class GameFrame extends JFrame implements ViewInterface {
         JMenuBar menuBar = new JMenuBar();
 
         JMenu menuJuego = new JMenu("Juego");
-        JMenu menuTema  = new JMenu("Cambiar tema");
+        JMenu menuTema = new JMenu("Cambiar tema");
 
-        JMenuItem itemClaro  = new JMenuItem("Claro");
+        JMenuItem itemClaro = new JMenuItem("Claro");
         JMenuItem itemOscuro = new JMenuItem("Oscuro");
 
-        itemClaro.addActionListener(e  -> ThemeManager.applyByKey(ThemeManager.LIGHT));
+        itemClaro.addActionListener(e -> ThemeManager.applyByKey(ThemeManager.LIGHT));
         itemOscuro.addActionListener(e -> ThemeManager.applyByKey(ThemeManager.DARK));
 
         menuTema.add(itemClaro);
@@ -78,7 +77,7 @@ public class GameFrame extends JFrame implements ViewInterface {
         menuJuego.addSeparator();
         menuJuego.add(itemSalir);
 
-        JMenu menuInfo     = new JMenu("Acerca de");
+        JMenu menuInfo = new JMenu("Acerca de");
         JMenuItem itemInfo = new JMenuItem("Info del proyecto");
         itemInfo.addActionListener(e -> showProjectInfo());
         menuInfo.add(itemInfo);
@@ -185,22 +184,24 @@ public class GameFrame extends JFrame implements ViewInterface {
     }
 
     private void addKeyListeners() {
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (presenter == null)
-                    return;
-                if (e.getKeyCode() == KeyEvent.VK_UP)
-                    presenter.onMoveRacketBy(-20);
-                if (e.getKeyCode() == KeyEvent.VK_DOWN)
-                    presenter.onMoveRacketBy(20);
-                if (e.getKeyChar() == '+')
-                    presenter.onIncreaseSpeed();
-                if (e.getKeyChar() == '-')
-                    presenter.onDecreaseSpeed();
-            }
-        });
+        KeyboardFocusManager.getCurrentKeyboardFocusManager()
+                .addKeyEventDispatcher(e -> {
+                    if (e.getID() != KeyEvent.KEY_PRESSED || presenter == null)
+                        return false;
+                    switch (e.getKeyCode()) {
+                        case KeyEvent.VK_UP -> presenter.onMoveRacketBy(-20);
+                        case KeyEvent.VK_DOWN -> presenter.onMoveRacketBy(20);
+                        case KeyEvent.VK_ADD -> presenter.onIncreaseSpeed(); // + del teclado numérico
+                        case KeyEvent.VK_MINUS -> presenter.onDecreaseSpeed(); // - del teclado numérico
+                    }
+                    if (e.getKeyChar() == '+')
+                        presenter.onIncreaseSpeed(); // + normal
+                    if (e.getKeyChar() == '-')
+                        presenter.onDecreaseSpeed(); // - normal
+                    return false;
+                });
         setFocusable(true);
+        requestFocusInWindow();
     }
 
     private void showProjectInfo() {

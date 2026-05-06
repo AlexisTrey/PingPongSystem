@@ -61,7 +61,7 @@ public class MainModel implements ModelInterface {
         speedThread = new Thread(() -> {
             while (!gameOver && !Thread.currentThread().isInterrupted()) {
                 try {
-                    Thread.sleep(15_000); // cada 15 segundos sube la velocidad
+                    Thread.sleep(15_000); // aumenta la velocidad cada 15 segundos
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     return;

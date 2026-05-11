@@ -80,36 +80,6 @@ Código: 202222448
 
 ---
 
-## Compilar el proyecto
-
-```bash
-mvn clean compile
-```
-
----
-
-## Generar el JAR
-
-```bash
-mvn clean package
-```
-
-El archivo generado se encontrará en:
-
-```
-target/PingPongSystem-1.0.0.jar
-```
-
----
-
-## Ejecutar el proyecto
-
-```bash
-java -jar target/PingPongSystem-1.0.0.jar
-```
-
----
-
 ## Dependencias
 
 El proyecto utiliza las siguientes dependencias:

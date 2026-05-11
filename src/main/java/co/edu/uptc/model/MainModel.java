@@ -1,6 +1,6 @@
 package co.edu.uptc.model;
 
-import co.edu.uptc.config.AppConfig;
+import co.edu.uptc.util.Utilities;
 import co.edu.uptc.interfaces.ModelInterface;
 import co.edu.uptc.pojo.Ball;
 import co.edu.uptc.pojo.Racket;
@@ -45,14 +45,14 @@ public class MainModel implements ModelInterface {
         threads.clear();
         paused = false;
         gameOver = false;
-        globalSpeed = AppConfig.INITIAL_SPEED_X;
+        globalSpeed = Utilities.INITIAL_SPEED_X;
         startTime = TimeFormatter.currentTime();
         startMillis = System.currentTimeMillis();
         racket = new Racket(
-                AppConfig.RACKET_X,
-                AppConfig.PANEL_HEIGHT / 2 - AppConfig.RACKET_HEIGHT / 2,
-                AppConfig.RACKET_WIDTH,
-                AppConfig.RACKET_HEIGHT);
+                Utilities.RACKET_X,
+                Utilities.PANEL_HEIGHT / 2 - Utilities.RACKET_HEIGHT / 2,
+                Utilities.RACKET_WIDTH,
+                Utilities.RACKET_HEIGHT);
         addBall();
         startSpeedThread();
         totalPausedMillis = 0;
@@ -81,9 +81,9 @@ public class MainModel implements ModelInterface {
         if (gameOver)
             return;
         Ball ball = new Ball(
-                AppConfig.PANEL_WIDTH / 4,
-                AppConfig.PANEL_HEIGHT / 2,
-                AppConfig.BALL_DIAMETER,
+                Utilities.PANEL_WIDTH / 4,
+                Utilities.PANEL_HEIGHT / 2,
+                Utilities.BALL_DIAMETER,
                 -globalSpeed,
                 globalSpeed,
                 0);
@@ -120,8 +120,8 @@ public class MainModel implements ModelInterface {
             ball.setY(0);
             ball.setSpeedY(-ball.getSpeedY());
         }
-        if (ball.getY() + ball.getDiameter() >= AppConfig.PANEL_HEIGHT) {
-            ball.setY(AppConfig.PANEL_HEIGHT - ball.getDiameter());
+        if (ball.getY() + ball.getDiameter() >= Utilities.PANEL_HEIGHT) {
+            ball.setY(Utilities.PANEL_HEIGHT - ball.getDiameter());
             ball.setSpeedY(-ball.getSpeedY());
         }
     }
@@ -145,7 +145,7 @@ public class MainModel implements ModelInterface {
     }
 
     private void checkGameOver(Ball ball) {
-        if (ball.getX() + ball.getDiameter() >= AppConfig.PANEL_WIDTH) {
+        if (ball.getX() + ball.getDiameter() >= Utilities.PANEL_WIDTH) {
             gameOver = true;
             stopAllThreads();
             if (onGameOver != null)
@@ -162,7 +162,7 @@ public class MainModel implements ModelInterface {
 
     private void sleep() {
         try {
-            Thread.sleep(AppConfig.GAME_LOOP_DELAY_MS);
+            Thread.sleep(Utilities.GAME_LOOP_DELAY_MS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -193,8 +193,8 @@ public class MainModel implements ModelInterface {
         int newY = y - racket.getHeight() / 2;
         if (newY < 0)
             newY = 0;
-        if (newY + racket.getHeight() > AppConfig.PANEL_HEIGHT) {
-            newY = AppConfig.PANEL_HEIGHT - racket.getHeight();
+        if (newY + racket.getHeight() > Utilities.PANEL_HEIGHT) {
+            newY = Utilities.PANEL_HEIGHT - racket.getHeight();
         }
         racket.setY(newY);
     }
@@ -206,24 +206,24 @@ public class MainModel implements ModelInterface {
         int newY = racket.getY() + deltaY;
         if (newY < 0)
             newY = 0;
-        if (newY + racket.getHeight() > AppConfig.PANEL_HEIGHT)
-            newY = AppConfig.PANEL_HEIGHT - racket.getHeight();
+        if (newY + racket.getHeight() > Utilities.PANEL_HEIGHT)
+            newY = Utilities.PANEL_HEIGHT - racket.getHeight();
         racket.setY(newY);
     }
 
     @Override
     public void increaseSpeed() {
-        if (globalSpeed >= AppConfig.MAX_SPEED)
+        if (globalSpeed >= Utilities.MAX_SPEED)
             return;
-        globalSpeed += AppConfig.SPEED_INCREMENT;
+        globalSpeed += Utilities.SPEED_INCREMENT;
         applySpeedToBalls();
     }
 
     @Override
     public void decreaseSpeed() {
-        if (globalSpeed <= AppConfig.MIN_SPEED)
+        if (globalSpeed <= Utilities.MIN_SPEED)
             return;
-        globalSpeed -= AppConfig.SPEED_INCREMENT;
+        globalSpeed -= Utilities.SPEED_INCREMENT;
         applySpeedToBalls();
     }
 

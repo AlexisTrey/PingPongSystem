@@ -3,7 +3,7 @@ package co.edu.uptc.view;
 import co.edu.uptc.components.button.CustomButton;
 import co.edu.uptc.components.dialog.AboutDialog;
 import co.edu.uptc.components.fonts.AppFonts;
-import co.edu.uptc.config.AppConfig;
+import co.edu.uptc.util.Utilities;
 import co.edu.uptc.interfaces.PresenterInterface;
 import co.edu.uptc.interfaces.ViewInterface;
 import co.edu.uptc.pojo.Ball;
@@ -43,7 +43,7 @@ public class MainFrame extends JFrame implements ViewInterface {
 
     private void initFrame() {
         setTitle("Ping Pong");
-        setSize(AppConfig.FRAME_WIDTH, AppConfig.FRAME_HEIGHT);
+        setSize(Utilities.FRAME_WIDTH, Utilities.FRAME_HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -97,7 +97,7 @@ public class MainFrame extends JFrame implements ViewInterface {
 
     private void addInfoPanel() {
         JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 10));
-        infoPanel.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH, AppConfig.PANEL_HEIGHT));
+        infoPanel.setPreferredSize(new Dimension(Utilities.INFO_PANEL_WIDTH, Utilities.PANEL_HEIGHT));
         infoPanel.setBorder(BorderFactory.createTitledBorder("Game Info"));
 
         buildDataPanel(infoPanel);
@@ -122,7 +122,7 @@ public class MainFrame extends JFrame implements ViewInterface {
         textAreaBounces.setBackground(parent.getBackground());
         ((DefaultCaret) textAreaBounces.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
         JScrollPane scroll = new JScrollPane(textAreaBounces);
-        scroll.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 150));
+        scroll.setPreferredSize(new Dimension(Utilities.INFO_PANEL_WIDTH - 20, 150));
         scroll.setBorder(BorderFactory.createEtchedBorder());
         return scroll;
     }
@@ -130,11 +130,11 @@ public class MainFrame extends JFrame implements ViewInterface {
     private JPanel buildStartTimeSection() {
         JPanel section = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 2));
         section.setOpaque(false);
-        section.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 45));
+        section.setPreferredSize(new Dimension(Utilities.INFO_PANEL_WIDTH - 20, 45));
         section.add(createLabel("Hora de inicio:", AppFonts.BODY_BOLD));
         labelStartTime = new JLabel("--:--:--");
         labelStartTime.setFont(AppFonts.BODY);
-        labelStartTime.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 20));
+        labelStartTime.setPreferredSize(new Dimension(Utilities.INFO_PANEL_WIDTH - 20, 20));
         section.add(labelStartTime);
         return section;
     }
@@ -142,11 +142,11 @@ public class MainFrame extends JFrame implements ViewInterface {
     private JPanel buildElapsedSection() {
         JPanel section = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 2));
         section.setOpaque(false);
-        section.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 45));
+        section.setPreferredSize(new Dimension(Utilities.INFO_PANEL_WIDTH - 20, 45));
         section.add(createLabel("Tiempo transcurrido:", AppFonts.BODY_BOLD));
         labelElapsed = new JLabel("00:00:00");
         labelElapsed.setFont(AppFonts.BODY);
-        labelElapsed.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 20));
+        labelElapsed.setPreferredSize(new Dimension(Utilities.INFO_PANEL_WIDTH - 20, 20));
         section.add(labelElapsed);
         return section;
     }
@@ -154,7 +154,7 @@ public class MainFrame extends JFrame implements ViewInterface {
     private JLabel createLabel(String text, Font font) {
         JLabel label = new JLabel(text);
         label.setFont(font);
-        label.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 20));
+        label.setPreferredSize(new Dimension(Utilities.INFO_PANEL_WIDTH - 20, 20));
         return label;
     }
 
@@ -176,7 +176,7 @@ public class MainFrame extends JFrame implements ViewInterface {
 
     private CustomButton createButton(String label, java.awt.event.ActionListener action) {
         CustomButton btn = new CustomButton(label);
-        btn.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 35));
+        btn.setPreferredSize(new Dimension(Utilities.INFO_PANEL_WIDTH - 20, 35));
         btn.onClick(action);
         return btn;
     }

@@ -1,6 +1,6 @@
-package co.edu.uptc.config;
+package co.edu.uptc.util;
 
-public class AppConfig {
+public class Utilities {
     public static final int FRAME_WIDTH = 920;
     public static final int FRAME_HEIGHT = 640;
     public static final int PANEL_WIDTH = 690;
@@ -21,6 +21,6 @@ public class AppConfig {
 
     public static final int GAME_LOOP_DELAY_MS = 16;
 
-    private AppConfig() {
+    private Utilities() {
     }
 }

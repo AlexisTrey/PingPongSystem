@@ -1,6 +1,6 @@
 package co.edu.uptc.view;
 
-import co.edu.uptc.config.AppConfig;
+import co.edu.uptc.util.Utilities;
 import co.edu.uptc.interfaces.PresenterInterface;
 import co.edu.uptc.pojo.Ball;
 import co.edu.uptc.pojo.Racket;
@@ -23,7 +23,7 @@ public class GamePanel extends JPanel {
     }
 
     private void initPanel() {
-        setPreferredSize(new Dimension(AppConfig.PANEL_WIDTH, AppConfig.PANEL_HEIGHT));
+        setPreferredSize(new Dimension(Utilities.PANEL_WIDTH, Utilities.PANEL_HEIGHT));
         setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         setFocusable(false);
     }

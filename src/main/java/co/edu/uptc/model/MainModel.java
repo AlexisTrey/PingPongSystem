@@ -21,6 +21,8 @@ public class MainModel implements ModelInterface {
     private String startTime;
     private long startMillis;
     private int globalSpeed;
+    private long pauseStartMillis;
+    private long totalPausedMillis;
 
     private Thread speedThread;
     private Runnable onGameOver;
@@ -53,6 +55,8 @@ public class MainModel implements ModelInterface {
                 AppConfig.RACKET_HEIGHT);
         addBall();
         startSpeedThread();
+        totalPausedMillis = 0;
+        pauseStartMillis = 0;
     }
 
     private void startSpeedThread() {
@@ -115,12 +119,10 @@ public class MainModel implements ModelInterface {
         if (ball.getY() <= 0) {
             ball.setY(0);
             ball.setSpeedY(-ball.getSpeedY());
-            ball.setBounceCount(ball.getBounceCount() + 1);
         }
         if (ball.getY() + ball.getDiameter() >= AppConfig.PANEL_HEIGHT) {
             ball.setY(AppConfig.PANEL_HEIGHT - ball.getDiameter());
             ball.setSpeedY(-ball.getSpeedY());
-            ball.setBounceCount(ball.getBounceCount() + 1);
         }
     }
 
@@ -128,7 +130,6 @@ public class MainModel implements ModelInterface {
         if (ball.getX() <= 0) {
             ball.setX(0);
             ball.setSpeedX(-ball.getSpeedX());
-            ball.setBounceCount(ball.getBounceCount() + 1);
         }
     }
 
@@ -170,11 +171,13 @@ public class MainModel implements ModelInterface {
     @Override
     public void pauseGame() {
         paused = true;
+        pauseStartMillis = System.currentTimeMillis();
     }
 
     @Override
     public void resumeGame() {
         paused = false;
+        totalPausedMillis += System.currentTimeMillis() - pauseStartMillis;
     }
 
     @Override
@@ -260,6 +263,9 @@ public class MainModel implements ModelInterface {
 
     @Override
     public long getElapsedSeconds() {
-        return (System.currentTimeMillis() - startMillis) / 1000;
+        long pausado = totalPausedMillis;
+        if (paused)
+            pausado += System.currentTimeMillis() - pauseStartMillis;
+        return (System.currentTimeMillis() - startMillis - pausado) / 1000;
     }
 }

@@ -57,12 +57,12 @@ public class GamePanel extends JPanel {
     }
 
     private void drawRacket(Graphics g) {
-        g.setColor(Color.ORANGE);
+        g.setColor(Color.BLUE);
         g.fillRect(racket.getX(), racket.getY(), racket.getWidth(), racket.getHeight());
     }
 
     private void drawBalls(Graphics g) {
-        g.setColor(Color.BLUE);
+        g.setColor(Color.RED);
         synchronized (balls) {
             for (Ball ball : balls) {
                 g.fillOval(ball.getX(), ball.getY(), ball.getDiameter(), ball.getDiameter());

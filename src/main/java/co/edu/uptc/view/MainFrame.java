@@ -11,6 +11,7 @@ import co.edu.uptc.pojo.Racket;
 import co.edu.uptc.util.ThemeManager;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.LinkedHashMap;
@@ -22,6 +23,7 @@ public class MainFrame extends JFrame implements ViewInterface {
 
     private PresenterInterface presenter;
     private GamePanel gamePanel;
+    private CustomButton btnStart;
 
     private JLabel labelStartTime;
     private JLabel labelElapsed;
@@ -105,82 +107,88 @@ public class MainFrame extends JFrame implements ViewInterface {
     }
 
     private void buildDataPanel(JPanel parent) {
+        parent.add(buildBouncesSection(parent));
+        parent.add(buildStartTimeSection());
+        parent.add(buildElapsedSection());
+        registerThemeListener(parent);
+    }
 
-        JLabel lblBouncesTitle = new JLabel("Rebotes:");
-        lblBouncesTitle.setFont(AppFonts.BODY_BOLD);
-        lblBouncesTitle.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 20));
-        textAreaBounces = new JTextArea();
+    private JScrollPane buildBouncesSection(JPanel parent) {
+        JLabel title = createLabel("Rebotes:", AppFonts.BODY_BOLD);
+        parent.add(title);
+        textAreaBounces = new JTextArea("--");
         textAreaBounces.setEditable(false);
         textAreaBounces.setFont(AppFonts.BODY);
         textAreaBounces.setBackground(parent.getBackground());
-        textAreaBounces.setText("--");
-        JScrollPane scrollBounces = new JScrollPane(textAreaBounces);
-        scrollBounces.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 150));
-        scrollBounces.setBorder(BorderFactory.createEtchedBorder());
+        ((DefaultCaret) textAreaBounces.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+        JScrollPane scroll = new JScrollPane(textAreaBounces);
+        scroll.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 150));
+        scroll.setBorder(BorderFactory.createEtchedBorder());
+        return scroll;
+    }
 
-        JLabel lblStartTitle = new JLabel("Hora de inicio:");
-        lblStartTitle.setFont(AppFonts.BODY_BOLD);
-        lblStartTitle.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 20));
+    private JPanel buildStartTimeSection() {
+        JPanel section = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 2));
+        section.setOpaque(false);
+        section.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 45));
+        section.add(createLabel("Hora de inicio:", AppFonts.BODY_BOLD));
         labelStartTime = new JLabel("--:--:--");
         labelStartTime.setFont(AppFonts.BODY);
         labelStartTime.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 20));
+        section.add(labelStartTime);
+        return section;
+    }
 
-        JLabel lblElapsedTitle = new JLabel("Tiempo transcurrido:");
-        lblElapsedTitle.setFont(AppFonts.BODY_BOLD);
-        lblElapsedTitle.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 20));
+    private JPanel buildElapsedSection() {
+        JPanel section = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 2));
+        section.setOpaque(false);
+        section.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 45));
+        section.add(createLabel("Tiempo transcurrido:", AppFonts.BODY_BOLD));
         labelElapsed = new JLabel("00:00:00");
         labelElapsed.setFont(AppFonts.BODY);
         labelElapsed.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 20));
-        parent.add(lblBouncesTitle);
-        parent.add(scrollBounces);
-        parent.add(lblStartTitle);
-        parent.add(labelStartTime);
-        parent.add(lblElapsedTitle);
-        parent.add(labelElapsed);
+        section.add(labelElapsed);
+        return section;
+    }
 
+    private JLabel createLabel(String text, Font font) {
+        JLabel label = new JLabel(text);
+        label.setFont(font);
+        label.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 20));
+        return label;
+    }
+
+    private void registerThemeListener(JPanel parent) {
         UIManager.addPropertyChangeListener(evt -> {
-            if ("lookAndFeel".equals(evt.getPropertyName())) {
+            if ("lookAndFeel".equals(evt.getPropertyName()))
                 textAreaBounces.setBackground(parent.getBackground());
-            }
         });
     }
 
     private void buildButtonPanel(JPanel parent) {
-        CustomButton btnIniciar = new CustomButton("Iniciar");
-        btnIniciar.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 35));
-        btnIniciar.onClick(e -> {
-            if (presenter != null)
-                presenter.onStartGame();
-        });
-        CustomButton btnPausar = new CustomButton("Pausar");
-        btnPausar.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 35));
-        btnPausar.onClick(e -> {
-            if (presenter != null)
-                presenter.onPauseGame();
-        });
-        CustomButton btnReanudar = new CustomButton("Reanudar");
-        btnReanudar.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 35));
-        btnReanudar.onClick(e -> {
-            if (presenter != null)
-                presenter.onResumeGame();
-        });
-        CustomButton btnReiniciar = new CustomButton("Reiniciar");
-        btnReiniciar.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 35));
-        btnReiniciar.onClick(e -> {
-            if (presenter != null)
-                presenter.onResetGame();
-        });
-        CustomButton btnAgregarPelota = new CustomButton("Añadir pelota");
-        btnAgregarPelota.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 35));
-        btnAgregarPelota.onClick(e -> {
-            if (presenter != null)
-                presenter.onAddBall();
-        });
-        parent.add(btnIniciar);
-        parent.add(btnPausar);
-        parent.add(btnReanudar);
-        parent.add(btnReiniciar);
-        parent.add(btnAgregarPelota);
+        btnStart = createButton("Iniciar",       this::handleStart);
+        parent.add(btnStart);
+        parent.add(createButton("Pausar",        e -> fire(presenter::onPauseGame)));
+        parent.add(createButton("Reanudar",      e -> fire(presenter::onResumeGame)));
+        parent.add(createButton("Reiniciar",     e -> fire(presenter::onResetGame)));
+        parent.add(createButton("Añadir pelota", e -> fire(presenter::onAddBall)));
+    }
+
+    private CustomButton createButton(String label, java.awt.event.ActionListener action) {
+        CustomButton btn = new CustomButton(label);
+        btn.setPreferredSize(new Dimension(AppConfig.INFO_PANEL_WIDTH - 20, 35));
+        btn.onClick(action);
+        return btn;
+    }
+
+    private void handleStart(java.awt.event.ActionEvent e) {
+        if (presenter == null) return;
+        presenter.onStartGame();
+        btnStart.setEnabled(false);
+    }
+
+    private void fire(Runnable action) {
+        if (presenter != null) action.run();
     }
 
     private void addKeyListeners() {
@@ -237,7 +245,7 @@ public class MainFrame extends JFrame implements ViewInterface {
     public void showGameOver() {
         int option = JOptionPane.showConfirmDialog(
                 this,
-                "Juego terminado. ¿Deseas reiniciar?",
+                "Juego terminado. \n¿Deseas reiniciar?",
                 "Fin del juego",
                 JOptionPane.YES_NO_OPTION);
         if (option == JOptionPane.YES_OPTION)
